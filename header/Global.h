@@ -48,38 +48,3 @@ struct DiskBlock
     char Data[BLOCKSIZE];
 };
 
-//-------------------------------------------------------------------Variables-------------------------------------------------------
-
-// Defining the MetaData Variables
-
-// Size of sizeHDD
-unsigned long long int sizeHDD;
-
-// Size of Start Block
-unsigned long long int size_StartBlock;
-
-// HDD - Size of Start_Block
-unsigned long long int sizeHDD_StartBlock;
-
-// Size of the MetaData
-unsigned long long int size_MetaData;
-
-// Size of the DiskBlock
-unsigned long long int size_DiskBlock;
-
-// MetaData + DiskBlock
-unsigned long long int size_MetaData_DiskBlock;
-
-// Number of MetaData
-unsigned long long int num_MetaData;
-
-// Number of the DiskBlock
-unsigned long long int num_DiskBlock;
-
-unsigned long long int Space;
-
-
-
-//-------------------------------------------------------------------Declaring the Structures-------------------------------------------------------
-
-struct StartBlock SB;
