@@ -1,0 +1,133 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include "../header/create_file_system.h"
+#include "../header/Global.h"
+#include "../header/I_O_operation.h"
+
+
+void create_file_system() {
+//-------------------------------------------------------------------File System Size-------------------------------------------------------
+
+    // Inputing the size of disk
+    printf("\nEnter the Size of Hard Disk in GB: ");
+    sizeHDD = input_sizeHDD();
+    printf("\nSizeHDD : %llu\n",sizeHDD);
+
+    // Converting into Bytes
+    sizeHDD = sizeHDD * 1000000000;
+    printf("\nSize in GB: %llu\n",sizeHDD);
+
+    // Size of StartBlock
+    size_StartBlock = sizeof(struct StartBlock);
+    printf("\nSize of StartBlock: %llu\n",size_StartBlock);
+
+    // SizeHDD - StartBlock
+    sizeHDD_StartBlock = sizeHDD - size_StartBlock;
+    printf("\nSize of SizeHDD - StartBlock: %llu\n",sizeHDD_StartBlock);
+
+    // Size of MetaBlock
+    size_MetaData = sizeof(struct MetaData);
+    printf("\nSize of MetaBlock: %llu\n",size_MetaData);
+
+    // Size of DiskBlock
+    size_DiskBlock = sizeof(struct DiskBlock);
+    printf("\nSize of DiskBlock: %llu\n",size_DiskBlock);
+
+    // sizeof MetaData + DiskBlock
+    size_MetaData_DiskBlock = size_MetaData + size_DiskBlock;
+    printf("\nSize of the MetaBlock + DiskBlock: %llu\n",size_MetaData_DiskBlock);
+
+    // Num of MetaData
+    num_MetaData = sizeHDD_StartBlock / size_MetaData_DiskBlock;
+    printf("\nNum MetaData: %llu\n",num_MetaData);
+
+    // Num of DiskBlock
+    num_DiskBlock = num_MetaData;
+    printf("\nNum of DiskBlock: %llu\n",num_DiskBlock);
+
+//-------------------------------------------------------------------Creating File System-------------------------------------------------------
+
+// Creating the disk
+    create_disk();
+
+// Writing the StartBlock
+    SB.sizeHDD = sizeHDD;
+    printf("\nSizeHDD: %llu\n",SB.sizeHDD);
+    SB.size_block = BLOCKSIZE;
+    printf("\nBlock Size: %lu\n",SB.size_block);
+    SB.start_MetaData = size_StartBlock;
+    printf("\nStart of MetaData: %llu\n",SB.start_MetaData);
+    SB.start_Data_Block = (size_MetaData * num_MetaData) + size_StartBlock;
+    printf("\nStart of Data Block: %llu\n",SB.start_Data_Block);
+    fwrite(&SB,size_StartBlock,1,DISK);
+
+// Writing the MetaData
+    struct MetaData MetaData_Buffer;
+    // Setting the MetaData
+    MetaData_Buffer.file_number = -1;
+    MetaData_Buffer.file_size = 0;
+    MetaData_Buffer.first_block = -1;
+    strcpy(MetaData_Buffer.file_name,"Empty");
+    for (unsigned long long int i = 0; i < num_MetaData; i++)
+    {
+        fwrite(&MetaData_Buffer,sizeof(struct MetaData),1,DISK);
+    }
+
+// Writing the DiskBlock
+    struct DiskBlock Block;
+    // Setting the DiskBlock
+    Block.Next_Disk_Block = -1;
+    Block.pos = 0;
+    strcpy(Block.Data,"DummyData");
+    for (unsigned long long int i = 0; i < num_DiskBlock; i++)
+    {
+        fwrite(&Block,sizeof(struct DiskBlock),1,DISK);
+    }
+    
+// Closing the file
+fclose(DISK);
+// 
+
+}
+
+void read_file_system(){
+
+    DISK = fopen(DISK_NAME,"r");
+
+// StartBlock
+    struct StartBlock tempSb;
+    fread(&tempSb,size_StartBlock,1,DISK);
+    printf("\nSizeHDD: %llu\n",tempSb.sizeHDD);
+    printf("\nBlock Size: %lu\n",tempSb.size_block);
+    printf("\nStart of MetaData: %llu\n",tempSb.start_MetaData);
+    printf("\nStart of Data Block: %llu\n",tempSb.start_Data_Block);
+
+
+// MetaData 
+    struct MetaData tempMD;
+    printf("\nMetaData:\n");
+    for (int i = 0; i < 10; i++)
+    {   
+        fread(&tempMD,size_MetaData,1,DISK);
+        printf("\n%d:\n",i);
+        printf("\tFile Size: %llu\n",tempMD.file_size);
+        printf("\tFirst Block: %lld\n",tempMD.first_block);
+        printf("\tFile number: %lld\n",tempMD.file_number);
+        printf("\tFile Name: %s\n",tempMD.file_name);    
+    }
+
+
+// DiskBlock 
+    struct DiskBlock tempDB;
+    fseek(DISK,SB.start_Data_Block,SEEK_SET);
+    printf("\nDiskBlock:\n");
+    for (int i = 0; i < 10; i++)
+    {   
+        fread(&tempDB,sizeof(struct DiskBlock),1,DISK);
+        printf("\n%d:\n",i);
+        printf("\tNext Block: %lld\n",tempDB.Next_Disk_Block);
+        printf("\tPos : %ld\n",tempDB.pos);   
+    }
+}
+
