@@ -3,6 +3,7 @@
 #include<string.h>
 #include "../header/create_file_system.h"
 #include "../header/Global.h"
+#include "../header/I_O_operation.h"
 
 // Inputing the unsigned long long int
 unsigned long long int input_sizeHDD() {
