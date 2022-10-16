@@ -35,8 +35,17 @@ unsigned long long int num_DiskBlock;
 unsigned long long int Space;
 
 //-------------------------------------------------------------------Declaring the Structures-------------------------------------------------------
-
 struct StartBlock SB;
+
+
+//-------------------------------------------------------------------Bit Map-------------------------------------------------------
+
+__uint128_t *BitMap_MetaData;
+__uint128_t *BitMap_DiskBlock;
+int BIT_BLOCK = 128;
+unsigned long long int map_size_MetaData;
+unsigned long long int map_size_DiskBlock;
+//-------------------------------------------------------------------Function of Create File System-------------------------------------------------------
 
 // Creating the File System
 void create_file_system() {
@@ -223,4 +232,12 @@ void closing_file_system(){
     // Closing the file system
     fclose(DISK);
     printf("\nFile System Close Successfully!\n");
+}
+
+void print_file_system_details(){
+    
+    // Start Block
+    printf("SizeHDD: %llu\n",SB.sizeHDD);
+    printf("BlockSize: %lu\n",SB.size_block);
+    printf("Num of MetaData: %llu\n",num_MetaData);
 }
