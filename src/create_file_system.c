@@ -32,7 +32,7 @@ unsigned long long int num_MetaData;
 // Number of the DiskBlock
 unsigned long long int num_DiskBlock;
 
-unsigned long long int Space;
+unsigned long long int Space = 0;
 
 //-------------------------------------------------------------------Declaring the Structures-------------------------------------------------------
 struct StartBlock SB;
@@ -45,6 +45,28 @@ int BIT_BLOCK = 128;
 unsigned long long int map_size_MetaData;
 unsigned long long int map_size_DiskBlock;
 //-------------------------------------------------------------------Function of Create File System-------------------------------------------------------
+
+// Finding the Space
+void space_finder(){
+    
+    for (unsigned long long int i = 0; i < map_size_DiskBlock; i++)
+    {
+        
+        if (BitMap_DiskBlock[i] == -1)
+        {
+            Space = BLOCKSIZE*BIT_BLOCK;
+        }
+        else {
+            for (int j = 0; j < BIT_BLOCK; j++)
+            {
+                if (IS_BIT_SET(BitMap_DiskBlock[i],j))
+                {
+                    Space = Space + BLOCKSIZE;
+                }
+            }
+        }
+    }
+}
 
 // Creating the File System
 void create_file_system() {
@@ -133,6 +155,9 @@ void create_file_system() {
 
 // Creating the all free Bit map of DiskBlock'
     create_empty_bit_map_DiskBlock();
+
+// Finding the Space
+    space_finder();
 
 printf("\nFile System Successfully Created!\n");
 
@@ -231,6 +256,9 @@ void format_file_system() {
 // Creating the all free Bit map of DiskBlock'
     create_empty_bit_map_DiskBlock();
 
+    // Finding the Space
+    space_finder();
+
     printf("\nFile System Clean Successfully!\n");
 }
 
@@ -279,6 +307,9 @@ void mount_file_system() {
             }   
         }
 
+    // Finding the Space
+    space_finder();
+
     printf("\nFile System Successfully Mounted!\n");
 }
 
@@ -296,3 +327,4 @@ void print_file_system_details(){
     printf("BlockSize: %lu\n",SB.size_block);
     printf("Num of MetaData: %llu\n",num_MetaData);
 }
+

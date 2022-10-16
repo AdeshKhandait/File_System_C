@@ -17,6 +17,8 @@ extern unsigned long long int map_size_DiskBlock;
 
     void set_bit_MetaData(unsigned long long int number);
 
+    unsigned long long int search_empty_MetaData();
+
     //DiskBlock
     void set_all_bit_DiskBlock();
 
@@ -28,4 +30,6 @@ extern unsigned long long int map_size_DiskBlock;
 
     void clear_bit_DiskBlock(unsigned long long int number);
 
-    void set_bit_DiskBlock(unsigned long long int number);    
+    void set_bit_DiskBlock(unsigned long long int number);
+
+    unsigned long long int search_empty_DiskBlock(); 

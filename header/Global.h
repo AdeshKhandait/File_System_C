@@ -4,6 +4,12 @@
 
 #define DISK_NAME "./bin/DISK.vd"
 FILE *DISK;
+
+#define SET_BIT(BF, N) BF |= ((__uint128_t)0x0000000000000001 << N)
+#define CLR_BIT(BF, N) BF &= ~((__uint128_t)0x0000000000000001 << N)
+#define IS_BIT_SET(BF, N) ((BF>>N) & 01)
+
+
 // Basic Information
 // 1GB = 1000000000
 // Empty = -1
