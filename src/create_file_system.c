@@ -3,7 +3,7 @@
 #include<string.h>
 #include "../header/Global.h"
 #include "../header/I_O_operation.h"
-
+#include "../header/bit_map.h"
 //-------------------------------------------------------------------Variables-------------------------------------------------------
 
 // Defining the MetaData Variables
@@ -36,7 +36,6 @@ unsigned long long int Space;
 
 //-------------------------------------------------------------------Declaring the Structures-------------------------------------------------------
 struct StartBlock SB;
-
 
 //-------------------------------------------------------------------Bit Map-------------------------------------------------------
 
@@ -127,7 +126,16 @@ void create_file_system() {
         fwrite(&Block,sizeof(struct DiskBlock),1,DISK);
     }
 
+//-------------------------------------------------------------------Bit Map Creation-------------------------------------------------------
+
+// Creating the all free bit map of MetaData
+    create_empty_bit_map_MetaData();
+
+// Creating the all free Bit map of DiskBlock'
+    create_empty_bit_map_DiskBlock();
+
 printf("\nFile System Successfully Created!\n");
+
 }
 
 // Reading the File System
@@ -214,6 +222,15 @@ void format_file_system() {
         {
             fwrite(&Block,sizeof(struct DiskBlock),1,DISK);
         }
+
+//-------------------------------------------------------------------Bit Map Creation-------------------------------------------------------
+
+// Creating the all free bit map of MetaData
+    create_empty_bit_map_MetaData();
+
+// Creating the all free Bit map of DiskBlock'
+    create_empty_bit_map_DiskBlock();
+
     printf("\nFile System Clean Successfully!\n");
 }
 
@@ -222,8 +239,46 @@ void mount_file_system() {
 
     // Mounting the file system
     DISK = fopen(DISK_NAME,"a+");
-    // Setting the file pointer to start
-    fseek(DISK,0,SEEK_SET);
+    
+    
+    //Creating the BitMap of MetaData
+        fseek(DISK,SB.start_MetaData,SEEK_SET);
+    
+        // Temperary MetaData
+        struct MetaData tempMetaData;
+            
+        // Creating the Bit Map of MetaData
+        create_empty_bit_map_MetaData();
+
+        // Looping all over MetaData to check if it empty
+        for (unsigned long long int i = 0; i < num_MetaData; i++)
+        {   
+            fread(&tempMetaData,size_MetaData,1,DISK);
+            if (tempMetaData.file_number == -1)
+            {
+                set_bit_MetaData(i);
+            }
+        }
+    
+    // Creating the Bitmap of DiskBlock
+        fseek(DISK,SB.start_Data_Block,SEEK_SET);
+
+        // Temperary DiskBlock 
+        struct DiskBlock tempDiskBlock;
+
+        // Creating the Bit Map of MetaData
+        create_empty_bit_map_DiskBlock();
+
+        // Looping All over DiskBlock to check
+        for (unsigned long long int i = 0; i < num_DiskBlock; i++)
+        {
+            fread(&tempDiskBlock,size_DiskBlock,1,DISK);
+            if (tempDiskBlock.Next_Disk_Block == -1)
+            {
+                set_all_bit_DiskBlock(i);
+            }   
+        }
+
     printf("\nFile System Successfully Mounted!\n");
 }
 
