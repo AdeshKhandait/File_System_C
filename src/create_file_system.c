@@ -201,7 +201,8 @@ void read_file_system(int input){
         fread(&tempDB,sizeof(struct DiskBlock),1,DISK);
         printf("\n%d:\n",i);
         printf("\tNext Block: %lld\n",tempDB.Next_Disk_Block);
-        printf("\tPos : %ld\n",tempDB.pos);   
+        printf("\tPos : %ld\n",tempDB.pos);
+        printf("%s",tempDB.Data);
     }
 }
 

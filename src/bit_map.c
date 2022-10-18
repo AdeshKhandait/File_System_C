@@ -118,6 +118,16 @@
         return -1;
     }
 
+    // Find all occupied MetaData
+    void find_all_occupied(unsigned long long int *arr_MetaData){
+
+        
+
+
+
+    }
+
+
 
 // DiskBlock
 
