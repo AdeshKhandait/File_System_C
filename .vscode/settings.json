@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "i_o_operation.h": "c",
+        "stdio.h": "c",
+        "global.h": "c",
+        "unistd.h": "c",
+        "stdlib.h": "c",
+        "string.h": "c",
+        "create_file_system.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
+}

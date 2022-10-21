@@ -43,7 +43,7 @@ $(OBJ)/%.o: $(SRC)/%.c
 
 # Removing the file
 clean: 
-	$(RM) -r $(OBJ)/* $(BINDIR)/*
+	$(RM) -r $(OBJ)/%.c $(BINDIR)/%.c
 run:
 	./$(BIN)
 export:
