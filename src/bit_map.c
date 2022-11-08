@@ -40,10 +40,8 @@
 
         // Find the number bit required for MetaData
         map_size_MetaData = num_MetaData/BIT_BLOCK + 1;
-        printf("Map Size: %llu\n",map_size_MetaData);
 
         BitMap_MetaData = malloc(sizeof(__uint128_t)*map_size_MetaData);
-
 
         // Set all bit to 1
         set_all_bit_MetaData();
@@ -119,14 +117,43 @@
     }
 
     // Find all occupied MetaData
-    void find_all_occupied(unsigned long long int *arr_MetaData){
+    unsigned long long int find_all_occupied(unsigned long long int *arr_MetaData){
 
-        
+        unsigned long long int iterator = 0;
 
-
-
+        for (unsigned long long int i = 0; i < map_size_MetaData; i++)
+        {
+            // unsigned long long int iterator = 0;
+            // Check if whole Block is Occupied
+            if (BitMap_MetaData[i] == 0)
+            {
+                for (int j = 0; j < BIT_BLOCK; j++)
+                {
+                    arr_MetaData[iterator] = i + j;
+                    iterator++;
+                }
+            }
+            // Check if Whole Block is Empty
+            else if (BitMap_MetaData[i] == -1)
+            {
+                continue;
+            }
+            else{
+                for (int j = 0; j < BIT_BLOCK; j++)
+                {
+                    if (IS_BIT_SET(BitMap_MetaData[i],j))
+                    {
+                        continue;
+                    }
+                    else{
+                        arr_MetaData[iterator] = i + j;
+                        iterator++;
+                    }
+                }
+            }
+        }
+        return iterator + 1;
     }
-
 
 
 // DiskBlock
@@ -158,7 +185,6 @@
 
         // Find the number bit required for MetaData
         map_size_DiskBlock = num_DiskBlock/BIT_BLOCK + 1;
-        printf("Map Size: %llu\n",map_size_DiskBlock);
 
         BitMap_DiskBlock = malloc(sizeof(__uint128_t)*map_size_DiskBlock);
 
@@ -212,17 +238,19 @@
         {
             if (BitMap_DiskBlock[i] == 0)
             {
+                // printf("\nBlock: %llu\n",i);
                 continue;
             }
-            else if(BitMap_DiskBlock[i] == -1){
-                return i;
-            }
+            // else if(BitMap_DiskBlock[i] == -1){
+                // return i;
+            // }
             else{
                 for (int j = 0; j < BIT_BLOCK; j++)
                 {
+                    // printf("\n I: %llu\n",i);
                     if (IS_BIT_SET(BitMap_DiskBlock[i],j))
                     {
-                        return (i+j);
+                        return ((i*BIT_BLOCK)+j);
                     }
                     else{
                         continue;
@@ -234,4 +262,44 @@
         return -1;
     }
 
-    
+    // Search All empty DiskBlock
+    void range_empty_DiskBlock(unsigned long long int *arr_empty_DiskBlock, unsigned long long int number) {
+
+        unsigned long long int count = 0;
+        int flag = 0;
+        for (unsigned long long int i = 0; i < map_size_DiskBlock; i++)
+        {
+            
+            if (BitMap_DiskBlock[i] == 0)
+            {
+                continue;
+            }
+            else {
+                
+                for (int j = 0; j < BIT_BLOCK; j++)
+                {
+                    if (count == number)
+                    {
+                        flag = 1;
+                        break;
+                    }
+                    
+                    else if (IS_BIT_SET(BitMap_DiskBlock[i],j))
+                    {
+                        // return ((i*BIT_BLOCK)+j);
+                        arr_empty_DiskBlock[count] = (i*BIT_BLOCK) + j;
+                        count++; 
+                    }
+                    
+                    else{
+                        continue;
+                    }
+                }
+            }
+        }
+        if (flag == 0)
+        {
+            perror("\nDisk is Full");
+            exit(1);
+        }
+    }

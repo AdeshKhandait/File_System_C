@@ -51,6 +51,12 @@ void create_file_system();
 // Reading the File System
 void read_file_system(int input);
 
+// Print the MetaData
+void print_sp_MetaData(unsigned long long int number);
+
+// Print the Diskblock
+void print_sp_DiskBlock(unsigned long long int number);
+
 // Formating the File System
 void format_file_system();
 
@@ -62,3 +68,6 @@ void closing_file_system();
 
 // Printing File System Details
 void print_file_system_details();
+
+// Finding the space
+void space_finder();

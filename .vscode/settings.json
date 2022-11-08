@@ -7,7 +7,8 @@
         "stdlib.h": "c",
         "string.h": "c",
         "create_file_system.h": "c",
-        "bit_map.h": "c"
+        "bit_map.h": "c",
+        "file_handling.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
