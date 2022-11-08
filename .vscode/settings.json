@@ -6,7 +6,8 @@
         "unistd.h": "c",
         "stdlib.h": "c",
         "string.h": "c",
-        "create_file_system.h": "c"
+        "create_file_system.h": "c",
+        "bit_map.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

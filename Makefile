@@ -24,7 +24,7 @@ SRCS = $(wildcard $(SRC)/*.c)
 OBJS = $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SRCS))
  
 # Specifying the Binary file
-BIN = $(BINDIR)/FileSystem
+BIN = $(BINDIR)/FileSystem.out
 
 # Export in zip file
 EXPORT_NAME = FileSystem.zip
@@ -43,7 +43,7 @@ $(OBJ)/%.o: $(SRC)/%.c
 
 # Removing the file
 clean: 
-	$(RM) -r $(OBJ)/%.c $(BINDIR)/%.c
+	$(RM) -r $(OBJ)/*.o $(BINDIR)/*.vd $(BINDIR)/*.out
 run:
 	./$(BIN)
 export:

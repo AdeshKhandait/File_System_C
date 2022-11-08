@@ -36,6 +36,14 @@ extern unsigned long long int Space;
 extern struct StartBlock SB;
 
 
+//-------------------------------------------------------------------Bit Map-------------------------------------------------------
+
+extern __uint128_t *BitMap_MetaData;
+extern __uint128_t *BitMap_DiskBlock;
+extern int BIT_BLOCK;
+extern unsigned long long int map_size_MetaData;
+extern unsigned long long int map_size_DiskBlock;
+//-------------------------------------------------------------------Function of Create File System-------------------------------------------------------
 
 // Creating the File System
 void create_file_system();
@@ -51,3 +59,6 @@ void mount_file_system();
 
 // Closing the File system
 void closing_file_system();
+
+// Printing File System Details
+void print_file_system_details();
