@@ -10,9 +10,7 @@
 // 0 : Occupied DiskBlock
 // Zero Indexing
 
-#define SET_BIT(BF, N) BF |= ((__uint128_t)0x0000000000000001 << N)
-#define CLR_BIT(BF, N) BF &= ~((__uint128_t)0x0000000000000001 << N)
-#define IS_BIT_SET(BF, N) ((BF>>N) & 01)
+
 
 // MetaData
     // Set all bit
@@ -42,10 +40,8 @@
 
         // Find the number bit required for MetaData
         map_size_MetaData = num_MetaData/BIT_BLOCK + 1;
-        printf("Map Size: %llu\n",map_size_MetaData);
 
         BitMap_MetaData = malloc(sizeof(__uint128_t)*map_size_MetaData);
-
 
         // Set all bit to 1
         set_all_bit_MetaData();
@@ -59,7 +55,7 @@
     // printing the Bit Block
     void print_bit_block_MetaData(unsigned long long int number) {
 
-        printf("\nNumber %llu: ",number);
+        printf("\nMetaData Number %llu: ",number);
         for (int i = 0; i < BIT_BLOCK; i++)
         {
             if(IS_BIT_SET(BitMap_MetaData[number],i)){
@@ -88,6 +84,75 @@
         __uint128_t Index = number/BIT_BLOCK;
         __uint128_t Bit_num = number % BIT_BLOCK;
         SET_BIT(BitMap_MetaData[Index],Bit_num);
+    }
+
+    // Search Empty MetaData
+    unsigned long long int search_empty_MetaData() {
+
+        for (unsigned long long int i = 0; i < map_size_MetaData; i++)
+        {
+            if (BitMap_MetaData[i] == 0) {
+                continue;
+            }
+            else if (BitMap_MetaData[i] == -1) {
+                return i;
+            }
+            else
+            {
+                for (int j = 0; j < BIT_BLOCK; j++)
+                {
+                    if (IS_BIT_SET(BitMap_MetaData[i],j))
+                    {
+                        return (i+j);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+        }
+        printf("\nDisk is FULL\n");
+        return -1;
+    }
+
+    // Find all occupied MetaData
+    unsigned long long int find_all_occupied(unsigned long long int *arr_MetaData){
+
+        unsigned long long int iterator = 0;
+
+        for (unsigned long long int i = 0; i < map_size_MetaData; i++)
+        {
+            // unsigned long long int iterator = 0;
+            // Check if whole Block is Occupied
+            if (BitMap_MetaData[i] == 0)
+            {
+                for (int j = 0; j < BIT_BLOCK; j++)
+                {
+                    arr_MetaData[iterator] = i + j;
+                    iterator++;
+                }
+            }
+            // Check if Whole Block is Empty
+            else if (BitMap_MetaData[i] == -1)
+            {
+                continue;
+            }
+            else{
+                for (int j = 0; j < BIT_BLOCK; j++)
+                {
+                    if (IS_BIT_SET(BitMap_MetaData[i],j))
+                    {
+                        continue;
+                    }
+                    else{
+                        arr_MetaData[iterator] = i + j;
+                        iterator++;
+                    }
+                }
+            }
+        }
+        return iterator + 1;
     }
 
 
@@ -120,7 +185,6 @@
 
         // Find the number bit required for MetaData
         map_size_DiskBlock = num_DiskBlock/BIT_BLOCK + 1;
-        printf("Map Size: %llu\n",map_size_DiskBlock);
 
         BitMap_DiskBlock = malloc(sizeof(__uint128_t)*map_size_DiskBlock);
 
@@ -136,7 +200,7 @@
     // printing the Bit Block
     void print_bit_block_DiskBlock(unsigned long long int number) {
 
-        printf("\nNumber %llu: ",number);
+        printf("\n DiskBlock Number %llu: ",number);
         for (int i = 0; i < BIT_BLOCK; i++)
         {
             if(IS_BIT_SET(BitMap_DiskBlock[number],i)){
@@ -159,10 +223,83 @@
         CLR_BIT(BitMap_DiskBlock[Index],Bit_num);
     }
 
-    // Setting bit of MetaDat
+    // Setting bit of MetaData
     void set_bit_DiskBlock(unsigned long long int number) {
-
+        
         __uint128_t Index = number/BIT_BLOCK;
         __uint128_t Bit_num = number % BIT_BLOCK;
         SET_BIT(BitMap_DiskBlock[Index],Bit_num);
+    }
+
+    // Search Empty DiskBlock
+    unsigned long long int search_empty_DiskBlock() {
+
+        for (unsigned long long int i = 0; i < map_size_DiskBlock; i++)
+        {
+            if (BitMap_DiskBlock[i] == 0)
+            {
+                // printf("\nBlock: %llu\n",i);
+                continue;
+            }
+            // else if(BitMap_DiskBlock[i] == -1){
+                // return i;
+            // }
+            else{
+                for (int j = 0; j < BIT_BLOCK; j++)
+                {
+                    // printf("\n I: %llu\n",i);
+                    if (IS_BIT_SET(BitMap_DiskBlock[i],j))
+                    {
+                        return ((i*BIT_BLOCK)+j);
+                    }
+                    else{
+                        continue;
+                    }
+                }
+            }
+        }
+        printf("\nDisk is FULL\n");
+        return -1;
+    }
+
+    // Search All empty DiskBlock
+    void range_empty_DiskBlock(unsigned long long int *arr_empty_DiskBlock, unsigned long long int number) {
+
+        unsigned long long int count = 0;
+        int flag = 0;
+        for (unsigned long long int i = 0; i < map_size_DiskBlock; i++)
+        {
+            
+            if (BitMap_DiskBlock[i] == 0)
+            {
+                continue;
+            }
+            else {
+                
+                for (int j = 0; j < BIT_BLOCK; j++)
+                {
+                    if (count == number)
+                    {
+                        flag = 1;
+                        break;
+                    }
+                    
+                    else if (IS_BIT_SET(BitMap_DiskBlock[i],j))
+                    {
+                        // return ((i*BIT_BLOCK)+j);
+                        arr_empty_DiskBlock[count] = (i*BIT_BLOCK) + j;
+                        count++; 
+                    }
+                    
+                    else{
+                        continue;
+                    }
+                }
+            }
+        }
+        if (flag == 0)
+        {
+            perror("\nDisk is Full");
+            exit(1);
+        }
     }

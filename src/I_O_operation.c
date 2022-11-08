@@ -21,8 +21,6 @@ unsigned long long int input_sizeHDD() {
     
 }
 
-
-
 // Creating the Disk 
 void create_disk(){
 
@@ -32,7 +30,19 @@ void create_disk(){
         perror("Unable open Disk");
         exit(1);
     }
-    else{
-        printf("Disk Open Successfully!\n");
-    }
 }
+
+// Inputing the string
+void input_string(char *input) {
+
+        // printf("\nInput the String: ");
+        scanf("%s",input);
+        
+        if (strlen(input) == 0)
+        {
+            perror("String is empty!");
+            exit(1);
+        }
+    }
+
+

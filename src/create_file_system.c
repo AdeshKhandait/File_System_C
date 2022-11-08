@@ -4,6 +4,7 @@
 #include "../header/Global.h"
 #include "../header/I_O_operation.h"
 #include "../header/bit_map.h"
+#include "../header/file_handling.h"
 //-------------------------------------------------------------------Variables-------------------------------------------------------
 
 // Defining the MetaData Variables
@@ -32,7 +33,7 @@ unsigned long long int num_MetaData;
 // Number of the DiskBlock
 unsigned long long int num_DiskBlock;
 
-unsigned long long int Space;
+unsigned long long int Space = 0;
 
 //-------------------------------------------------------------------Declaring the Structures-------------------------------------------------------
 struct StartBlock SB;
@@ -46,10 +47,31 @@ unsigned long long int map_size_MetaData;
 unsigned long long int map_size_DiskBlock;
 //-------------------------------------------------------------------Function of Create File System-------------------------------------------------------
 
+// Finding the Space
+void space_finder(){
+    
+    for (unsigned long long int i = 0; i < map_size_DiskBlock; i++)
+    {
+        
+        if (BitMap_DiskBlock[i] == -1)
+        {
+            Space = Space + (BLOCKSIZE*BIT_BLOCK);
+        }
+        else {
+            for (int j = 0; j < BIT_BLOCK; j++)
+            {
+                if (IS_BIT_SET(BitMap_DiskBlock[i],j))
+                {
+                    Space = Space + BLOCKSIZE;
+                }
+            }
+        }
+    }
+}
+
 // Creating the File System
 void create_file_system() {
 //-------------------------------------------------------------------File System Size-------------------------------------------------------
-
     // Inputing the size of disk
     printf("\nEnter the Size of Hard Disk in GB: ");
     sizeHDD = input_sizeHDD();
@@ -134,6 +156,9 @@ void create_file_system() {
 // Creating the all free Bit map of DiskBlock'
     create_empty_bit_map_DiskBlock();
 
+// Finding the Space
+    space_finder();
+
 printf("\nFile System Successfully Created!\n");
 
 }
@@ -176,9 +201,41 @@ void read_file_system(int input){
         fread(&tempDB,sizeof(struct DiskBlock),1,DISK);
         printf("\n%d:\n",i);
         printf("\tNext Block: %lld\n",tempDB.Next_Disk_Block);
-        printf("\tPos : %ld\n",tempDB.pos);   
+        printf("\tPos : %ld\n",tempDB.pos);
+        printf("%s",tempDB.Data);
     }
 }
+
+// read specific DiskBlock
+   void print_sp_DiskBlock(unsigned long long int number)
+   {
+    struct DiskBlock tempDB;
+    // fseek(DISK,SB.start_Data_Block + number ,SEEK_SET);
+    seek_at_DiskBlock(number);
+    
+    printf("\nDiskBlock:\n");  
+        fread(&tempDB,sizeof(struct DiskBlock),1,DISK);
+        printf("\n%llu:\n",number);
+        printf("\tNext Block: %lld\n",tempDB.Next_Disk_Block);
+        printf("\tPos : %ld\n",tempDB.pos);
+        printf("%s",tempDB.Data);
+    
+   }
+
+
+// Read specific MetaData
+    void print_sp_MetaData(unsigned long long int number){
+
+        struct MetaData tempMD;
+        // fseek(DISK,SB.start_Data_Block + number ,SEEK_SET);
+        seek_at_MetaData(number);  
+            fread(&tempMD,sizeof(struct MetaData),1,DISK);
+            printf("\n%llu:\n",number);
+            printf("\t File Name: %s\n",tempMD.file_name);
+            printf("\t File Size: %llu:\n",tempMD.file_size);
+            printf("\t First Block: %llu\n",tempMD.first_block);
+   }
+
 
 // Formating the File System
 void format_file_system() {
@@ -231,6 +288,9 @@ void format_file_system() {
 // Creating the all free Bit map of DiskBlock'
     create_empty_bit_map_DiskBlock();
 
+    // Finding the Space
+    space_finder();
+
     printf("\nFile System Clean Successfully!\n");
 }
 
@@ -238,9 +298,45 @@ void format_file_system() {
 void mount_file_system() {
 
     // Mounting the file system
-    DISK = fopen(DISK_NAME,"a+");
-    
-    
+    DISK = fopen(DISK_NAME,"rb+");
+
+
+    // Reading the start block
+        fread(&SB,1,sizeof(struct StartBlock),DISK);
+
+    // File system Size
+        // Converting into Bytes
+        sizeHDD = SB.sizeHDD;
+    printf("\nSize in GB: %llu\n",sizeHDD);
+
+    // Size of StartBlock
+        size_StartBlock = sizeof(struct StartBlock);
+
+    // SizeHDD - StartBlock
+    sizeHDD_StartBlock = sizeHDD - size_StartBlock;
+    printf("\nSize of SizeHDD - StartBlock: %llu\n",sizeHDD_StartBlock);
+
+    // Size of MetaBlock
+    size_MetaData = sizeof(struct MetaData);
+    printf("\nSize of MetaBlock: %llu\n",size_MetaData);
+
+    // Size of DiskBlock
+    size_DiskBlock = sizeof(struct DiskBlock);
+    printf("\nSize of DiskBlock: %llu\n",size_DiskBlock);
+
+    // sizeof MetaData + DiskBlock
+    size_MetaData_DiskBlock = size_MetaData + size_DiskBlock;
+    printf("\nSize of the MetaBlock + DiskBlock: %llu\n",size_MetaData_DiskBlock);
+
+    // Num of MetaData
+    num_MetaData = sizeHDD_StartBlock / size_MetaData_DiskBlock;
+    printf("\nNum MetaData: %llu\n",num_MetaData);
+
+    // Num of DiskBlock
+    num_DiskBlock = num_MetaData;
+    printf("\nNum of DiskBlock: %llu\n",num_DiskBlock);
+
+
     //Creating the BitMap of MetaData
         fseek(DISK,SB.start_MetaData,SEEK_SET);
     
@@ -257,6 +353,9 @@ void mount_file_system() {
             if (tempMetaData.file_number == -1)
             {
                 set_bit_MetaData(i);
+            }
+            else{
+                clear_bit_MetaData(i);
             }
         }
     
@@ -275,9 +374,15 @@ void mount_file_system() {
             fread(&tempDiskBlock,size_DiskBlock,1,DISK);
             if (tempDiskBlock.Next_Disk_Block == -1)
             {
-                set_all_bit_DiskBlock(i);
-            }   
+                set_bit_DiskBlock(i);
+            }
+            else{
+                clear_bit_DiskBlock(i);
+            }
         }
+
+    // // Finding the Space
+    space_finder();
 
     printf("\nFile System Successfully Mounted!\n");
 }
@@ -296,3 +401,4 @@ void print_file_system_details(){
     printf("BlockSize: %lu\n",SB.size_block);
     printf("Num of MetaData: %llu\n",num_MetaData);
 }
+
