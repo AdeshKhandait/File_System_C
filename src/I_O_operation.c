@@ -3,21 +3,18 @@
 #include<string.h>
 #include "../header/Global.h"
 
+
+
+
 // Inputing the unsigned long long int
 unsigned long long int input_sizeHDD() {
 
     unsigned long long int input;
     // restricting to 1 digit and 10 GB
-    scanf("%1llu",&input);
+    scanf("%llu",&input);
     getchar();
-    if (input == 0 || input >=10)
-    {
-        perror("Invaild Value");
-        exit(1);
-    }
-    else{
-        return input;
-    }
+    return input;
+    
     
 }
 

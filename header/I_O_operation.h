@@ -1,3 +1,4 @@
+
 // Inputing the unsigned long long int
 unsigned long long int input_sizeHDD();
 

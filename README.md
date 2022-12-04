@@ -1,9 +1,25 @@
-File System in C without the using Linux System Call
+# File System in C
 
-## Setup Guidelines for Project
-### 1.Build the File System
+
+### Instruction of running system
+-   **$header$** directory consist of header file system
+-   **$bin$** directory consist of all binary file    generated. The File system executable is named as FileSystem.out
+-   **$obj$** directory consist of all object file genearated during compilation
+-   **$src$** directory consist of the src file for the file system
+-   **To perform the operation on file system make change in $main.c$ file in $src$ directory**
+
+
+
+
+### Working Environment
+-   gcc-9.5.0
+-   ubuntu
+
+
+### Setup Guidelines for Project
+#### 1.Build the File System
 ```
-make
+make build
 ```
 
 ### 2.Removing Object and Start from Scratch
@@ -13,6 +29,8 @@ make clean
 
 ### 3.Running the File System
 ```
+make clean
+make build
 make run
 ```
 

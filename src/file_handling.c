@@ -346,7 +346,7 @@ void print_files_in_Disk() {
         // Searching in the disk
         unsigned long long int *arr_MetaData;
         arr_MetaData = malloc(sizeof(unsigned long long int)*map_size_MetaData);
-        unsigned long long int iterator;
+        unsigned long long int iterator = 0;
         iterator = find_all_occupied(arr_MetaData);
 
         printf("\nIterator: %llu\n",iterator);

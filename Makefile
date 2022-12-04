@@ -2,7 +2,7 @@
 
 # ---------------------------Macros-----------------------------------------------
 # Specifying the Compiler and DEBUG
-CC=gcc
+CC=gcc-9
 DB = gdb
 
 # Specifying the Flags
@@ -27,7 +27,7 @@ OBJS = $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SRCS))
 BIN = $(BINDIR)/FileSystem.out
 
 # Export in zip file
-EXPORT_NAME = FileSystem.zip
+EXPORT_NAME = FileSystem.tar.gz
 
 all: $(BIN)
 
@@ -48,7 +48,7 @@ run:
 	./$(BIN)
 export:
 	$(RM) $(EXPORT_NAME)
-	zip $(EXPORT_NAME) $(BIN) src/*.c Makefile README.md
+	tar -czf $(EXPORT_NAME) header/*.h obj/ bin/ external_files/  src/*.c  Makefile README.txt
 
 # Debugging
 release: CFLAG = -g -Wall

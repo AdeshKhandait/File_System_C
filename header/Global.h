@@ -53,4 +53,3 @@ struct DiskBlock
     long int pos;
     char Data[BLOCKSIZE];
 };
-
